@@ -19,17 +19,21 @@
     (throw (ex-info "Token already started."
       {:state state :index index :new-state new-state}))))
 
+; Normalize keywords in lower-case.
+(defn- to-keyword [str]
+  (keyword (.toLowerCase str)))
+
 ; Converts state into a token value.
 ; state token-end -> token-value
 (defn- to-token-value
   [{:keys [str token-start token-type value-type] :as state} token-end]
   (let [token-str (.substring str token-start token-end)]
     (case token-type
-      :command (keyword token-str)
-      :operator (keyword token-str)
+      :command (to-keyword token-str)
+      :operator (to-keyword token-str)
       :variable (if (.isEmpty token-str)
         (throw (ex-info "Empty variable name." {:state state}))
-        (keyword token-str))
+        (to-keyword token-str))
       :value (case value-type
         :integer (Integer/parseInt token-str)
         :float (Float/parseFloat token-str)
@@ -122,3 +126,16 @@
   (eol (reduce tokenize-step
     {:str str :token-start -1 :mode :whitespace :tokens []}
     (range (.length str)))))
+
+; Functions for creating tokens for testing.
+(defn cmd [value]
+  {:type :command :value value})
+
+(defn op [value]
+  {:type :operator :value value})
+
+(defn tvar [value]
+  {:type :variable :value value})
+
+(defn tval [value]
+  {:type :value :value value})

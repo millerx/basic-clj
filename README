@@ -1,0 +1,6 @@
+BASIC interpreter written in Clojure.
+
+tokenizer.clj:  String to tokens.
+ast.clj:        Tokens to Clojure form to be evaluated.
+runtime.clj:    Contains BASIC implementation. Functions referenced in ast.clj.
+core.clj:       Feed tokens into ast. Eval forms from ast.
